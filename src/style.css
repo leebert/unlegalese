@@ -1,0 +1,62 @@
+@import url('https://fonts.googleapis.com/css2?family=Yrsa:ital,wght@0,300..700;1,300..700&family=Zalando+Sans+Expanded:ital,wght@0,200..900;1,200..900&display=swap');
+@import "./normalize.css";
+
+body {
+  align-items: center;
+  background-color: #faf3ec;
+  display: flex;
+  flex-direction: column;
+  font-family: "Yrsa", serif;
+  font-optical-sizing: auto;
+  font-size: 1rem;
+  font-weight: 400;
+  gap: 8px;
+  justify-content: center;
+  margin: 10vh 15vw;
+}
+
+button {
+  cursor: pointer;
+  margin-top: 16px;
+}
+
+h1 {
+  font-family: "Zalando Sans Expanded", sans-serif;
+  font-optical-sizing: auto;
+  font-size: 4rem;
+  font-weight: 400;
+  margin: 0;
+  text-align: center;
+}
+
+h4 {
+  font-family: "Zalando Sans Expanded", sans-serif;
+  font-optical-sizing: auto;
+  font-size: 1.05rem;
+  font-weight: 400;
+  margin: 8px 0;
+  text-align: center;
+}
+
+p {
+  margin: 8px 0 0 0;
+  text-align: center;
+}
+
+#results {
+  border-radius: 8px;
+  border: 1px dashed #765c43;
+  font-size: 1.1rem;
+  font-weight: 600;
+  padding: 16px
+}
+
+.test-copy {
+  display: none;
+}
+
+@media only screen and (max-width: 450px) {
+h1 {
+  font-size: 2.5rem;
+}
+}
