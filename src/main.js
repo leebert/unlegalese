@@ -29,8 +29,8 @@ window.onload = () => {
     testApp().then(()=>{
       console.log('testApp completed')
     });
-    // getSummary(TEST_COPY).then(response => {
-    //   console.log(response.id);
+    // getSummary(TEST_COPY).then(()=>{
+    //   console.log('testApp completed')
     // });
   });
 };
@@ -43,11 +43,9 @@ const hasLegalese = () => {
 
 async function getSummary(legalCopy) {
   try {
-    const response = await Parse.Cloud.run("getSummary", { legalese: legalCopy });
-    return response;
+    await Parse.Cloud.run("getSummary", { legalese: legalCopy });
   } catch (e) {
-    console.log('getSummary failed');
-    console.error(e);
+    console.log(`testOpenAI failed - ${e}`);
   }
 };
 

@@ -1,2 +1,2 @@
 # unlegalese
-OpenAI API Prototype
+An OpenAI API Prototype
