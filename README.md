@@ -12,6 +12,7 @@ To help me learn how to build and host apps that leverage LLMs I came up with th
 - ✅ Turn app into Google Chrome extension
 - ☑️ Learn how to set up Back4App local dev environment 
 
-### ToDos
+### ToDos & Things To Improve
 - Figure out why streaming isn't working.
-- Add password protection.
+- Add password protection?
+- Figure out how to get a formatted response, or how to format it, so it isn't just a giant blob of text.
