@@ -10,3 +10,7 @@ To help me learn how to build and host apps that leverage LLMs I came up with th
 ✅ Expose functionality via backend service using Back4App
 🚧 Improve UX by leveraging OpenAI API streaming and Back4App LiveQuery
 ✅ Turn app into Google Chrome extension
+
+### ToDos
+- Figure out why streaming isn't working.
+- Add password protection.
