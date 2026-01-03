@@ -39,16 +39,21 @@ h4 {
 }
 
 p {
-  margin: 8px 0 0 0;
+  margin: 16px 0 0 0;
   text-align: center;
 }
 
 #results {
+  background-color: #F0EDE9;
   border-radius: 8px;
   border: 1px dashed #765c43;
   font-size: 1.1rem;
   font-weight: 600;
-  padding: 16px
+  padding: 16px;
+}
+
+#results:empty {
+  opacity: 0.25;
 }
 
 .test-copy {
@@ -56,6 +61,10 @@ p {
 }
 
 @media only screen and (max-width: 450px) {
+body {
+  margin: 10vh 10vw;
+}
+
 h1 {
   font-size: 2.5rem;
 }

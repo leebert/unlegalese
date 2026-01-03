@@ -1,0 +1,21 @@
+{
+  "name": "Unlegalese",
+  "description": "Complex legal agreements in plain English using AI.",
+  "version": "1.0",
+  "manifest_version": 3,
+  "icons": {
+    "16": "unlegalese_extension_icon.png",
+    "48": "unlegalese_extension_icon.png",
+    "128": "unlegalese_extension_icon.png"
+  },
+  "background": {
+    "service_worker": "service-worker.js"
+  },
+  "action": {
+    "default_title": "Click to open panel"
+  },
+  "side_panel": {
+    "default_path": "index.html"
+  },
+  "permissions": ["sidePanel"]
+}
