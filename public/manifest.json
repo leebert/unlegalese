@@ -17,5 +17,13 @@
   "side_panel": {
     "default_path": "index.html"
   },
-  "permissions": ["sidePanel"]
+  "permissions": [
+    "sidePanel",
+    "scripting",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ]
 }
