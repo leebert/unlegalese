@@ -8,7 +8,7 @@ To help me learn how to build and host apps that leverage LLMs I came up with th
 - ✅ Learn how to use OpenAI’s API
 - ✅ Learn about prompt engineering
 - ✅ Expose functionality via backend service using Back4App
-- 🚧 Improve UX by leveraging OpenAI API streaming and Back4App LiveQuery
+- ✅ Improve UX by leveraging OpenAI API streaming and Back4App LiveQuery
 - ✅ Turn app into Google Chrome extension
 - ☑️ Learn how to set up [Back4App local dev] (https://www.back4app.com/docs/local-development/parse-cli)
 
