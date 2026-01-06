@@ -53,10 +53,14 @@ p {
 }
 
 #results:empty {
-  opacity: 0.25;
+  opacity: 0;
 }
 
 .test-copy {
+  display: none;
+}
+
+#thinking {
   display: none;
 }
 

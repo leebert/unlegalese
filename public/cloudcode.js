@@ -12,40 +12,45 @@ Parse.Cloud.define("testOpenAI", async (request) => {
     apiKey: process.env.OPENAI_API_KEY,
   });
   
-  const response = await openai.responses.create({
+  // const response = await openai.responses.create({
+  //   model: 'gpt-5-nano-2025-08-07',
+  //   instructions: 'You are a storyteller that talks like a pirate.',
+  //   input: 'Tell a ten word story about a tardigrade.',
+  //   stream: true,
+  // });
+
+  // var tokenCount = 0;
+  // for await (const event of response) {
+  //   if(event.type == 'response.output_text.delta') {
+  //     openAIResponse.set('response', `${openAIResponse.get('response')}${event.delta}`);
+  //     tokenCount++;
+  //     openAIResponse.set('tokenCount', tokenCount);
+  //     openAIResponse.save();
+  //   }
+  // }
+
+  console.log('Starting stream for testOpenAI.');
+  var tokenCount = 0;
+  const stream = openai.responses
+    .stream({
     model: 'gpt-5-nano-2025-08-07',
     instructions: 'You are a storyteller that talks like a pirate.',
     input: 'Tell a ten word story about a tardigrade.',
     stream: true,
-  });
-
-  var tokenCount = 0;
-  for await (const event of response) {
-    if(event.type == 'response.output_text.delta') {
+    })
+    .on("response.output_text.delta", (event) => {
+      const now = new Date();
+      console.log(`⏲ Timestamp - ${now.toLocaleTimeString()}`);
       openAIResponse.set('response', `${openAIResponse.get('response')}${event.delta}`);
       tokenCount++;
       openAIResponse.set('tokenCount', tokenCount);
       openAIResponse.save();
-    }
-  }
+    })
+    .on("response.error", (event) => {
+      console.error(event.error);
+    });
+  
 });
-
-  // const stream = openai.responses
-  //   .stream({
-  //     model: 'gpt-5-nano-2025-08-07',
-  //     instructions: 'You are a five year old storyteller.',
-  //     input: 'Write a five word sentence about a tardigrade.',
-  //   })
-  //   .on("response.output_text.delta", (event) => {
-  //       openAIResponse.set('response', `${openAIResponse.get('response')}${event.delta}`);
-  //       openAIResponse.save();
-  //   })
-  //   .on("response.error", (event) => {
-  //     console.error(event.error);
-  //   });
-
-  // const result = await stream.finalResponse();
-  // return result;
 
 Parse.Cloud.define("getSummary", async (request) => {
   const OpenAIResponse = Parse.Object.extend("OpenAIResponse");
@@ -58,20 +63,42 @@ Parse.Cloud.define("getSummary", async (request) => {
     apiKey: process.env.OPENAI_API_KEY,
   });
   
-  const response = await openai.responses.create({
-    model: 'gpt-5-nano-2025-08-07',
-    instructions: 'You are an expert in legal matters with a friendly, but concise, writing style.',
-    input: `Write a layman-friendly summary of the following legal copy with no follow-up to do anything else. The summary should be no longer than four sentences. [BEGIN LEGAL COPY] ${legalese} [END LEGAL COPY]`,
-    stream: true,
-  });
+  // const response = await openai.responses.create({
+  //   model: 'gpt-5-nano-2025-08-07',
+  //   instructions: 'You are an expert in legal matters with a friendly, but concise, writing style.',
+  //   input: `Write a layman-friendly summary of the following legal copy with no follow-up to do anything else. The summary should be no longer than four sentences. [BEGIN LEGAL COPY] ${legalese} [END LEGAL COPY]`,
+  //   stream: true,
+  // });
+
+  // var tokenCount = 0;
+  // for await (const event of response) {
+  //   if(event.type == 'response.output_text.delta') {
+  //     openAIResponse.set('response', `${openAIResponse.get('response')}${event.delta}`);
+  //     tokenCount++;
+  //     openAIResponse.set('tokenCount', tokenCount);
+  //     openAIResponse.save();
+  //   }
+  // }
 
   var tokenCount = 0;
-  for await (const event of response) {
-    if(event.type == 'response.output_text.delta') {
+  const stream = openai.responses
+    .stream({
+      model: 'gpt-5-nano-2025-08-07',
+      instructions: 'You are an expert in legal matters with a friendly, but concise, writing style.',
+      input: `Write a layman-friendly summary of the following legal copy with no follow-up to do anything else. The summary should be no longer than four sentences. After each sentence create a new line by adding \n [BEGIN LEGAL COPY] ${legalese} [END LEGAL COPY]`,
+      stream: true,
+    })
+    .on("response.output_text.delta", (event) => {
       openAIResponse.set('response', `${openAIResponse.get('response')}${event.delta}`);
       tokenCount++;
       openAIResponse.set('tokenCount', tokenCount);
       openAIResponse.save();
-    }
-  }
+    })
+    .on("response.error", (event) => {
+      console.error(event.error);
+    });
+
+  // const result = await stream.finalResponse();
+  // return result;
+  
 });
