@@ -1,55 +1,31 @@
-//NOTE: The Parse CloudCode + LiveQuery solution does not work for OpenAI API streaming.
-//      Updates are blocked until the stream is completed and I could not figure out why,
-//      even with the assistance of the Back4App team.
-//      My solution was to switch over to fetch and api routing. Thanks for the guidance ChatGPT!
 import './style.css'
-// import Parse from 'parse/dist/parse.min.js';
+import { animate, splitText, stagger } from 'animejs';
 
 const TEST_TERMS = "The Terms of Use are the entire agreement between you and Brave with respect to the Service, and supersede all prior or contemporaneous communications and proposals (whether oral, written or electronic) between you and Brave with respect to the Service. If any provision of the Terms of Use is found to be unenforceable or invalid, that provision will be limited or eliminated to the minimum extent necessary so that the Terms of Use will otherwise remain in full force and effect and enforceable. The failure of either party to exercise in any respect any right provided for herein shall not be deemed a waiver of any further rights hereunder. Brave shall not be liable for any failure to perform its obligations hereunder due to any cause beyond Brave’s reasonable control. The Terms of Use are personal to you, and are not assignable or transferable by you except with Brave’s prior written consent. Brave may assign, transfer or delegate any of its rights and obligations hereunder without consent. No agency, partnership, joint venture, or employment relationship is created as a result of the Terms of Use and neither party has any authority of any kind to bind the other in any respect. Except as otherwise provided herein, all notices under the Terms of Use will be in writing and will be deemed to have been duly given when received, if personally delivered or sent by certified or registered mail, return receipt requested; when receipt is electronically confirmed, if transmitted by facsimile or e-mail; or two days after it is sent, if sent for next day delivery by recognized overnight delivery service.";
 
 window.onload = () => {
-  // Parse.initialize(
-  //   import.meta.env.VITE_B4A_APPLICATION_ID,
-  //   import.meta.env.VITE_B4A_JAVASCRIPT_KEY,
-  // );
-  // Parse.serverURL = "https://parseapi.back4app.com/";
-  // Parse.serverURL = `https://${import.meta.env.VITE_B4A_LIVE_SERVER_URL}`;
+  const { chars } = splitText(document.querySelector('#thinking'), {
+    chars: { wrap: 'visible' },
+  });
 
-  // const liveQueryClient = new Parse.LiveQueryClient({
-  //   applicationId: import.meta.env.VITE_B4A_APPLICATION_ID,
-  //   serverURL: import.meta.env.VITE_B4A_LIVE_SERVER_URL,
-  //   javascriptKey: import.meta.env.VITE_B4A_JAVASCRIPT_KEY,
-  // });
-  // liveQueryClient.open();
-  // const query = new Parse.Query("OpenAIResponse");
-  // const subscription = liveQueryClient.subscribe(query);
-  // subscription.on("update", data => {
-  //   const now = new Date();
-  //   console.log(now.toLocaleTimeString());
-  //   res.innerHTML = data.get('response');
-  // });
-
+  animate(chars, {
+    y: [
+      { to: '-5px', ease: 'outExpo', duration: 300 },
+      { to: 0, ease: 'outBounce', duration: 300, delay: 50 }
+    ],
+    ease: 'out(3)',
+    delay: stagger(50),
+    loop: true,
+  });
   const btn = document.querySelector('#btn-unlegalese');
   btn.addEventListener('click', () => {
-    // startLiveQuery();
     if (hasError) {
       res.innerHTML = legaleseCopy;
       return;
     }
-    // const now = new Date();
-    // console.log(`⏲ Timestamp - ${now.toLocaleTimeString()}`);
-    // console.log('calling testApp')
     const thinking = document.querySelector('#thinking');
     thinking.style.display = 'block';
     streamUnlegalese(legaleseCopy);
-    // testApp().then(()=>{
-    //   // const now = new Date();
-    //   // console.log(`⏲ Timestamp - ${now.toLocaleTimeString()}`);
-    //   // console.log('testApp completed')
-    // });
-    // getSummary(legaleseCopy).then(() => {
-    //   console.log('getSummary completed')
-    // });
   });
   getLegalese();
 };
@@ -110,6 +86,10 @@ async function streamUnlegalese(message) {
               results.innerHTML += payload;
             }
           }
+          window.scrollTo({
+            top: document.body.scrollHeight,
+            behavior: 'smooth'
+          }); 
         }
 
         // SSE done event
@@ -125,22 +105,6 @@ async function streamUnlegalese(message) {
     }
   }
 }
-
-// async function getSummary(legalCopy) {
-//   try {
-//     await Parse.Cloud.run("getSummary", { legalese: legalCopy });
-//   } catch (e) {
-//     console.log(`testOpenAI failed - ${e}`);
-//   }
-// };
-
-// async function testApp() {
-//   try {
-//     await Parse.Cloud.run("testOpenAI");
-//   } catch (e) {
-//     console.log(`testOpenAI failed - ${e}`);
-//   }
-// };
 
 var legaleseCopy, activeTabId;
 var hasError = false;
@@ -172,6 +136,47 @@ const getLegalese = () => {
 function getInnerHTML() {
   return document.body.innerText
 }
+
+//NOTE: The Parse CloudCode + LiveQuery solution does not work for OpenAI API streaming.
+//      Updates are blocked until the stream is completed and I could not figure out why,
+//      even with the assistance of the Back4App team.
+//      My solution was to switch over to fetch and api routing. Thanks for the guidance ChatGPT!
+
+// import Parse from 'parse/dist/parse.min.js';
+
+//In onLoad 
+// Parse.initialize(
+//   import.meta.env.VITE_B4A_APPLICATION_ID,
+//   import.meta.env.VITE_B4A_JAVASCRIPT_KEY,
+// );
+// Parse.serverURL = "https://parseapi.back4app.com/";
+// Parse.serverURL = `https://${import.meta.env.VITE_B4A_LIVE_SERVER_URL}`;
+
+// const liveQueryClient = new Parse.LiveQueryClient({
+//   applicationId: import.meta.env.VITE_B4A_APPLICATION_ID,
+//   serverURL: import.meta.env.VITE_B4A_LIVE_SERVER_URL,
+//   javascriptKey: import.meta.env.VITE_B4A_JAVASCRIPT_KEY,
+// });
+// liveQueryClient.open();
+// const query = new Parse.Query("OpenAIResponse");
+// const subscription = liveQueryClient.subscribe(query);
+// subscription.on("update", data => {
+//   const now = new Date();
+//   console.log(now.toLocaleTimeString());
+//   res.innerHTML = data.get('response');
+// });
+// startLiveQuery();
+
+//In click
+// testApp().then(()=>{
+//   // const now = new Date();
+//   // console.log(`⏲ Timestamp - ${now.toLocaleTimeString()}`);
+//   // console.log('testApp completed')
+// });
+// ~or~
+// getSummary(legaleseCopy).then(() => {
+//   console.log('getSummary completed')
+// });
 
 // const startLiveQuery = async () => {
 //   try {
@@ -212,6 +217,22 @@ function getInnerHTML() {
 //     process.exit(1);
 //   }
 // }
+
+// async function testApp() {
+//   try {
+//     await Parse.Cloud.run("testOpenAI");
+//   } catch (e) {
+//     console.log(`testOpenAI failed - ${e}`);
+//   }
+// };
+
+// async function getSummary(legalCopy) {
+//   try {
+//     await Parse.Cloud.run("getSummary", { legalese: legalCopy });
+//   } catch (e) {
+//     console.log(`testOpenAI failed - ${e}`);
+//   }
+// };
 
 // const hasLegalese = () => {
 //   return false;

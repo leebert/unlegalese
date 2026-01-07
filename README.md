@@ -12,7 +12,8 @@ To help me learn how to build and host apps that leverage LLMs I came up with th
 - ✅ Turn app into Google Chrome extension
 - ☑️ Learn how to set up [Back4App local dev] (https://www.back4app.com/docs/local-development/parse-cli)
 
-### ToDos & Things To Improve
-- Figure out why streaming isn't working.
-- Add password protection?
-- Figure out how to get a formatted response, or how to format it, so it isn't just a giant blob of text.
+### Improvements
+- Add monitoring of token consumption
+- Add "bring your own key" option?
+- Add password protection
+- Better formatting of response so it isn't just a blob of copy.

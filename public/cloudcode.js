@@ -1,4 +1,65 @@
-// Just a place to store all the cloud code written directly on the Back4App site until local dev is set up.
+// A place to store all the cloud code written directly on the Back4App site until local dev is set up.
+
+//app.js
+const OpenAI = require("openai");
+const express = require('express');
+
+const client = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+app.use(express.json());
+app.post("/unlegalese-stream", async (req, res) => {
+  const { message } = req.body;
+
+  // SSE headers
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+  res.flushHeaders?.();
+
+  try {
+    const stream = await client.responses.stream({
+      model: "gpt-5-nano-2025-08-07",
+      input: [
+        {
+          role: "system",
+          content: "You are an expert in legal matters with a friendly, but concise, writing style. Write a layman-friendly, plain English summary of the legal copy provided by the user. The summary should be between five and eight sentences long.",
+        },
+        {
+          role: "user",
+          content: message,
+        },
+      ],
+      stream: true,
+    });
+
+    for await (const event of stream) {
+      // Text tokens
+      if (event.type === "response.output_text.delta") {
+        res.write(`data: ${JSON.stringify(event.delta)}\n\n`);
+      }
+
+      // Optional: detect completion
+      if (event.type === "response.completed") {
+        res.write(`event: done\ndata: [DONE]\n\n`);
+        res.end();
+      }
+    }
+  } catch (err) {
+    console.error(err);
+    res.write(
+      `event: error\ndata: ${JSON.stringify(err.message)}\n\n`
+    );
+    res.end();
+  }
+});
+
+//main.js
+//NOTE: None of this code works for streaming. 
+//SSE updates are blocked until the functions complete.
+//But I'm keepin it here for posterity's sake.
+
 const OpenAI = require("openai");
 
 Parse.Cloud.define("testOpenAI", async (request) => {

@@ -43,7 +43,7 @@ p {
   text-align: center;
 }
 
-#results {
+.result {
   background-color: #F0EDE9;
   border-radius: 8px;
   border: 1px dashed #765c43;
