@@ -2,7 +2,7 @@
 An OpenAI API Prototype
 
 ### Project Overview
-To help me learn how to build and host apps that leverage LLMs I came up with the idea to use ChatGPT to create human-friendly summaries of legalese documents such as Terms of Service, Privacy Policies, etc.
+To help me learn how to build and host apps that leverage LLMs I came up with the idea to use OpenAI's Response API to create human-friendly summaries of legalese documents such as Terms of Service, Privacy Policies, etc.
 
 ![Unlegalese Demo Recording](https://github.com/user-attachments/assets/02fd075c-24f0-4e88-9e63-d8c1af25df8f)
 
