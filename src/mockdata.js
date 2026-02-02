@@ -37,8 +37,9 @@ export function testMockRender(renderCompleteFinal) {
   const thinking = document.querySelector("#thinking");
   const results = document.querySelector("#results");
   
-  thinking.style.display = "none";
+  thinking.style.display = "block";
   
+  thinking.style.display = "none";
   renderCompleteFinal(MOCK_RESPONSE, results);
   
 //   window.scrollTo({

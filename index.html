@@ -1,25 +1,33 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="apple-touch-icon" sizes="180x180" href="src/favicon/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="src/favicon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="src/favicon/favicon-16x16.png">
-    <link rel="manifest" href="src/favicon/site.webmanifest">
-    <title>unlegalese</title>
-  </head>
-  <body>
-    <div>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="apple-touch-icon" sizes="180x180" href="src/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="src/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="src/favicon/favicon-16x16.png">
+  <link rel="manifest" href="src/favicon/site.webmanifest">
+  <title>unlegalese</title>
+</head>
+
+<body>
+  <div class="header">
     <h1>Unlegalese</h1>
     <h4>Complex legal agreements in plain English.</h4>
+    <button id="btn-about" aria-label="About"><img src="./src/about.svg"></button>
+  </div>
+  <div id="about-modal-shim">
+    <div class="about-modal">
+      <p>Privacy Policies, Terms and Conditions, End-User License Agreements...who actually reads them?</p>
+      <p>Our eyes glaze over, we blindly click "I accept," and then hope for the best.</p>
+      <p>This prototype uses OpenAI's API to create a human-friendly summary of documents filled with legalese.</p>
     </div>
-    <div>
-    <p>Privacy Policies, Terms and Conditions, End-User License Agreements...who actually reads them? Our eyes glaze over, we blindly click "I accept," and hope for the best.</p><p>This prototype uses OpenAI's API to create a human-friendly summary of documents filled with legalese.</p>
-    </div>
-    <button id="btn-unlegalese">Unlegalese This Page</button>
-    <p class="result" id="results"></p>
-    <div class="result" id="thinking">🤔 Thinking... </div>
-    <script type="module" src="/src/main.js"></script>
-  </body>
+  </div>
+  <button id="btn-unlegalese">Unlegalese This Page</button>
+  <p class="result" id="results"></p>
+  <p class="result" id="thinking">🤔 Thinking... </p>
+  <script type="module" src="/src/main.js"></script>
+</body>
+
 </html>

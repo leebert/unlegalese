@@ -16,6 +16,15 @@ window.onload = () => {
     delay: stagger(50),
     loop: true,
   });
+
+  const shim = document.querySelector('#about-modal-shim');
+  shim.addEventListener('click', () => {
+    shim.style.display = 'none';
+  });
+  document.querySelector('#btn-about').addEventListener('click', () => {
+    shim.style.display = 'flex';
+  });
+
   const btn = document.querySelector('#btn-unlegalese');
   btn.addEventListener('click', () => {
     if (hasError) {

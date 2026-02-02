@@ -12,7 +12,7 @@ To help me learn how to build and host apps that leverage LLMs I came up with th
 - ✅ Proxy functionality via backend service using Back4App to manage auth, tokens, and keys.
 - ✅ Improve UX by leveraging OpenAI API streaming
 - ✅ Turn app into Google Chrome extension
-- ☑️ ~~Learn how to set up [Back4App local dev] (https://www.back4app.com/docs/local-development/parse-cli)!!
+- ☑️ ~~Learn how to set up [Back4App local dev] (https://www.back4app.com/docs/local-development/parse-cli)~~
 
 ### Improvements
 - ✅ Better formatting of response so it isn't just a blob of copy.
