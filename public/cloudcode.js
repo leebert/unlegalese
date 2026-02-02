@@ -64,7 +64,7 @@ app.post("/unlegalese-structured", async (req, res) => {
       messages: [
         {
           role: "system",
-          content: "You are an expert in legal matters. Analyze legal documents and provide structured summaries."
+          content: "You are an expert in legal matters. Analyze legal documents and provide structured summaries using human-friendly, plain English words."
         },
         {
           role: "user",
@@ -83,9 +83,9 @@ app.post("/unlegalese-structured", async (req, res) => {
                 type: "string",
                 description: "A brief title for the legal document"
               },
-              summary: {
+              plain_language_version: {
                 type: "string",
-                description: "A layman-friendly summary (3-5 sentences)"
+                description: "Ultra-simplified version for quick reading"
               },
               key_points: {
                 type: "array",
@@ -104,13 +104,9 @@ app.post("/unlegalese-structured", async (req, res) => {
                 type: "array",
                 description: "Potential concerns or red flags",
                 items: { type: "string" }
-              },
-              plain_language_version: {
-                type: "string",
-                description: "Ultra-simplified version for quick reading"
               }
             },
-            required: ["title", "summary", "key_points", "concerns", "plain_language_version"],
+            required: ["title", "plain_language_version", "key_points", "concerns"],
             additionalProperties: false
           }
         }
@@ -149,7 +145,7 @@ app.post("/unlegalese-structured-stream", async (req, res) => {
       messages: [
         {
           role: "system",
-          content: "You are an expert in legal matters. Analyze legal documents and provide structured summaries."
+          content: "You are an expert in legal matters. Analyze legal documents and provide structured summaries using human-friendly, plain English words."
         },
         {
           role: "user",
@@ -168,9 +164,9 @@ app.post("/unlegalese-structured-stream", async (req, res) => {
                 type: "string",
                 description: "A brief title for the legal document"
               },
-              summary: {
+              plain_language_version: {
                 type: "string",
-                description: "A layman-friendly summary (3-5 sentences)"
+                description: "Ultra-simplified version for quick reading"
               },
               key_points: {
                 type: "array",
@@ -189,118 +185,9 @@ app.post("/unlegalese-structured-stream", async (req, res) => {
                 type: "array",
                 description: "Potential concerns or red flags",
                 items: { type: "string" }
-              },
-              plain_language_version: {
-                type: "string",
-                description: "Ultra-simplified version for quick reading"
               }
             },
-            required: ["title", "summary", "key_points", "concerns", "plain_language_version"],
-            additionalProperties: false
-          }
-        }
-      },
-      stream: true
-    });
-
-    let accumulatedContent = "";
-
-    for await (const chunk of stream) {
-      const delta = chunk.choices[0]?.delta?.content;
-      
-      if (delta) {
-        accumulatedContent += delta;
-        
-        // Send the raw delta for progress indication
-        res.write(`data: ${JSON.stringify({ type: "delta", content: delta })}\n\n`);
-      }
-
-      // Check if streaming is complete
-      if (chunk.choices[0]?.finish_reason === "stop") {
-        // Parse the complete JSON and send as structured data
-        try {
-          const structuredData = JSON.parse(accumulatedContent);
-          res.write(`data: ${JSON.stringify({ type: "complete", data: structuredData })}\n\n`);
-        } catch (parseError) {
-          res.write(`data: ${JSON.stringify({ type: "error", error: "Failed to parse structured data" })}\n\n`);
-        }
-        
-        res.write(`event: done\ndata: [DONE]\n\n`);
-        res.end();
-      }
-    }
-
-  } catch (err) {
-    console.error(err);
-    res.write(
-      `event: error\ndata: ${JSON.stringify({ error: err.message })}\n\n`
-    );
-    res.end();
-  }
-});
-
-app.post("/unlegalese-structured-stream-final", async (req, res) => {
-  const { message } = req.body;
-
-  // SSE headers
-  res.setHeader("Content-Type", "text/event-stream");
-  res.setHeader("Cache-Control", "no-cache");
-  res.setHeader("Connection", "keep-alive");
-  res.flushHeaders?.();
-
-  try {
-    const stream = await client.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [
-        {
-          role: "system",
-          content: "You are an expert in legal matters. Analyze legal documents and provide structured summaries."
-        },
-        {
-          role: "user",
-          content: message
-        }
-      ],
-      response_format: {
-        type: "json_schema",
-        json_schema: {
-          name: "legal_summary",
-          strict: true,
-          schema: {
-            type: "object",
-            properties: {
-              title: {
-                type: "string",
-                description: "A brief title for the legal document"
-              },
-              summary: {
-                type: "string",
-                description: "A layman-friendly summary (3-5 sentences)"
-              },
-              key_points: {
-                type: "array",
-                description: "Key points extracted from the legal text",
-                items: {
-                  type: "object",
-                  properties: {
-                    heading: { type: "string" },
-                    explanation: { type: "string" }
-                  },
-                  required: ["heading", "explanation"],
-                  additionalProperties: false
-                }
-              },
-              concerns: {
-                type: "array",
-                description: "Potential concerns or red flags",
-                items: { type: "string" }
-              },
-              plain_language_version: {
-                type: "string",
-                description: "Ultra-simplified version for quick reading"
-              }
-            },
-            required: ["title", "summary", "key_points", "concerns", "plain_language_version"],
+            required: ["title", "plain_language_version", "key_points", "concerns"],
             additionalProperties: false
           }
         }

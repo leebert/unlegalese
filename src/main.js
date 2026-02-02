@@ -3,20 +3,7 @@ import { animate, splitText, stagger } from 'animejs';
 import { testMockRender } from './mockdata.js'
 
 window.onload = () => {
-  const { chars } = splitText(document.querySelector('#thinking'), {
-    chars: { wrap: 'visible' },
-  });
-
-  animate(chars, {
-    y: [
-      { to: '-5px', ease: 'outExpo', duration: 300 },
-      { to: 0, ease: 'outBounce', duration: 300, delay: 50 }
-    ],
-    ease: 'out(3)',
-    delay: stagger(50),
-    loop: true,
-  });
-
+  animateThinkingMode(document.querySelector('#empty-state'));
   const shim = document.querySelector('#about-modal-shim');
   shim.addEventListener('click', () => {
     shim.style.display = 'none';
@@ -31,20 +18,37 @@ window.onload = () => {
       res.innerHTML = legaleseCopy;
       return;
     }
-    const thinking = document.querySelector('#thinking');
-    thinking.style.display = 'block';
 
+    document.querySelector('#btn-unlegalese').classList.add('disabled');
     // streamUnlegalese(legaleseCopy);
     // getStructuredUnlegalese(legaleseCopy);
     // streamStructuredUnlegalese(legaleseCopy);
-    // progressiveRenderUnlegalese(legaleseCopy);
-    progressiveRenderUnlegaleseFinal(legaleseCopy);
+    progressiveRenderUnlegalese(legaleseCopy);
   });
   getLegalese();
 };
 
+function animateThinkingMode(element) {
+  const { chars } = splitText(element, {
+    chars: { wrap: 'visible' },
+  });
+
+  animate(chars, {
+    y: [
+      { to: '-5px', ease: 'outExpo', duration: 400 },
+      { to: 0, ease: 'outBounce', duration: 400, delay: 50 }
+    ],
+    ease: 'out(3)',
+    delay: stagger(50),
+    loop: true,
+  });
+}
+
 async function streamUnlegalese(message) {
   const controller = new AbortController();
+  const empty = document.querySelector("#empty-state");
+  empty.innerHTML = "🧐 Thinking...";
+  animateThinkingMode(empty);
 
   const response = await fetch(
     `https://${import.meta.env.VITE_B4A_LIVE_SERVER_URL}/unlegalese-stream`,
@@ -71,10 +75,7 @@ async function streamUnlegalese(message) {
 
   let buffer = "";
 
-  const thinking = document.querySelector("#thinking");
   const results = document.querySelector("#results");
-
-  thinking.style.display = "none";
 
   try {
     while (true) {
@@ -90,6 +91,7 @@ async function streamUnlegalese(message) {
       for (const line of lines) {
         // SSE data event
         if (line.startsWith("data: ")) {
+          empty.style.display = 'none';
           const payload = line.slice(6).trim();
 
           if (payload && payload !== "[DONE]") {
@@ -102,7 +104,8 @@ async function streamUnlegalese(message) {
           window.scrollTo({
             top: document.body.scrollHeight,
             behavior: 'smooth'
-          }); 
+          });
+          document.querySelector('#btn-unlegalese').classList.remove('disabled');
         }
 
         // SSE done event
@@ -113,6 +116,7 @@ async function streamUnlegalese(message) {
       }
     }
   } catch (err) {
+    document.querySelector('#btn-unlegalese').classList.remove('disabled');
     if (err.name !== "AbortError") {
       console.error("Streaming error:", err);
     }
@@ -120,8 +124,10 @@ async function streamUnlegalese(message) {
 }
 
 async function getStructuredUnlegalese(message) {
-  const thinking = document.querySelector("#thinking");
   const results = document.querySelector("#results");
+  const empty = document.querySelector("#empty-state");
+  empty.innerHTML = "🧐 Thinking...";
+  animateThinkingMode(empty);
 
   try {
     const response = await fetch(
@@ -138,8 +144,6 @@ async function getStructuredUnlegalese(message) {
       }
     );
 
-    thinking.style.display = "none";
-
     if (!response.ok) {
       const errorText = await response.text();
       throw new Error(`HTTP ${response.status}: ${errorText}`);
@@ -152,6 +156,7 @@ async function getStructuredUnlegalese(message) {
       return;
     }
 
+    empty.style.display = 'none';
     // Format the structured data as HTML
     results.innerHTML = `
       <div class="structured-summary">
@@ -190,13 +195,14 @@ async function getStructuredUnlegalese(message) {
       </div>
     `;
 
+    document.querySelector('#btn-unlegalese').classList.remove('disabled');
     window.scrollTo({
       top: document.body.scrollHeight,
       behavior: 'smooth'
     });
 
   } catch (err) {
-    thinking.style.display = "none";
+    document.querySelector('#btn-unlegalese').classList.remove('disabled');
     results.innerHTML = `<div class="error">Error: ${err.message}</div>`;
     console.error("Structured request error:", err);
   }
@@ -204,18 +210,21 @@ async function getStructuredUnlegalese(message) {
 
 async function streamStructuredUnlegalese(message) {
   const controller = new AbortController();
-  const thinking = document.querySelector("#thinking");
   const results = document.querySelector("#results");
+  const empty = document.querySelector("#empty-state");
+  empty.style.display = 'none';
 
   // Show a progress indicator
   results.innerHTML = `
     <div class="streaming-progress">
-      <div class="progress-text">Analyzing legal document...</div>
+      <div id="thinking" class="progress-text">🧐 Analyzing legal document...</div>
       <div class="progress-bar">
         <div class="progress-fill"></div>
       </div>
     </div>
   `;
+
+  animateThinkingMode(document.querySelector('#thinking'));
 
   try {
     const response = await fetch(
@@ -242,8 +251,6 @@ async function streamStructuredUnlegalese(message) {
     const decoder = new TextDecoder();
     let buffer = "";
     let charCount = 0;
-
-    thinking.style.display = "none";
 
     while (true) {
       const { value, done } = await reader.read();
@@ -312,6 +319,7 @@ async function streamStructuredUnlegalese(message) {
                   </div>
                 `;
 
+                document.querySelector('#btn-unlegalese').classList.remove('disabled');
                 window.scrollTo({
                   top: document.body.scrollHeight,
                   behavior: 'smooth'
@@ -333,7 +341,7 @@ async function streamStructuredUnlegalese(message) {
     }
   } catch (err) {
     if (err.name !== "AbortError") {
-      thinking.style.display = "none";
+      document.querySelector('#btn-unlegalese').classList.remove('disabled');
       results.innerHTML = `<div class="error">Error: ${err.message}</div>`;
       console.error("Streaming structured error:", err);
     }
@@ -342,25 +350,19 @@ async function streamStructuredUnlegalese(message) {
 
 async function progressiveRenderUnlegalese(message) {
   const controller = new AbortController();
-  const thinking = document.querySelector("#thinking");
   const results = document.querySelector("#results");
+  const empty = document.querySelector("#empty-state");
+  empty.style.display = 'none';
 
   // Initialize the container with progress bar and empty sections
   results.innerHTML = `
     <div class="streaming-progress">
-      <div class="progress-text">Analyzing legal document...</div>
+      <div id="thinking" class="progress-text">🧐 Analyzing legal document...</div>
       <div class="progress-bar">
         <div class="progress-fill"></div>
       </div>
     </div>
     <div class="structured-summary">
-      <h2 class="loading-placeholder">Analyzing document...</h2>
-      
-      <div class="summary-section">
-        <h3>Summary</h3>
-        <p class="content-placeholder">Generating summary...</p>
-      </div>
-
       <div class="plain-language-section">
         <h3>In Plain English</h3>
         <p class="content-placeholder">Simplifying language...</p>
@@ -373,12 +375,16 @@ async function progressiveRenderUnlegalese(message) {
         </ul>
       </div>
 
-      <div class="concerns-section" style="display: none;">
-        <h3>⚠️ Things to Watch Out For</h3>
-        <ul class="content-placeholder"></ul>
+      <div class="concerns-section">
+        <h3>Things to Watch Out For</h3>
+        <ul class="content-placeholder">
+          <li>Finding potential red flags...</li>
+        </ul>
       </div>
     </div>
   `;
+
+  animateThinkingMode(document.querySelector('#thinking'));
 
   try {
     const response = await fetch(
@@ -407,8 +413,6 @@ async function progressiveRenderUnlegalese(message) {
     let accumulatedJson = "";
     let charCount = 0;
 
-    thinking.style.display = "none";
-
     while (true) {
       const { value, done } = await reader.read();
       if (done) break;
@@ -430,14 +434,14 @@ async function progressiveRenderUnlegalese(message) {
               if (parsed.type === "delta") {
                 accumulatedJson += parsed.content;
                 charCount += parsed.content.length;
-                
+
                 // Update progress bar
                 const progressFill = results.querySelector(".progress-fill");
                 if (progressFill) {
                   const progress = Math.min((charCount / 50) * 100, 90);
                   progressFill.style.width = `${progress}%`;
                 }
-                
+
                 // Try to parse partial JSON and render what we can
                 tryProgressiveRender(accumulatedJson, results);
 
@@ -447,7 +451,7 @@ async function progressiveRenderUnlegalese(message) {
                 if (progressBar) {
                   progressBar.style.display = "none";
                 }
-                
+
                 const data = parsed.data;
                 renderComplete(data, results);
 
@@ -472,7 +476,6 @@ async function progressiveRenderUnlegalese(message) {
     }
   } catch (err) {
     if (err.name !== "AbortError") {
-      thinking.style.display = "none";
       results.innerHTML = `<div class="error">Error: ${err.message}</div>`;
       console.error("Progressive render error:", err);
     }
@@ -493,19 +496,6 @@ function tryProgressiveRender(jsonString, resultsElement) {
       }
     }
 
-    // Extract summary if available
-    const summaryMatch = jsonString.match(/"summary"\s*:\s*"([^"]+(?:\\.[^"]+)*)"/);
-    if (summaryMatch) {
-      const summaryElement = resultsElement.querySelector('.summary-section p');
-      if (summaryElement) {
-        // Unescape JSON string
-        const summary = summaryMatch[1].replace(/\\"/g, '"').replace(/\\n/g, '\n');
-        summaryElement.textContent = summary;
-        summaryElement.classList.remove('content-placeholder');
-        summaryElement.classList.add('fade-in');
-      }
-    }
-
     // Extract plain language version if available
     const plainMatch = jsonString.match(/"plain_language_version"\s*:\s*"([^"]+(?:\\.[^"]+)*)"/);
     if (plainMatch) {
@@ -526,7 +516,7 @@ function tryProgressiveRender(jsonString, resultsElement) {
       try {
         const keyPointsObj = JSON.parse(`{${keyPointsJson}}`);
         const keyPoints = keyPointsObj.key_points;
-        
+
         if (keyPoints && keyPoints.length > 0) {
           const keyPointsList = resultsElement.querySelector('.key-points-section ul');
           if (keyPointsList) {
@@ -551,11 +541,11 @@ function tryProgressiveRender(jsonString, resultsElement) {
         const concernsJson = concernsMatch[0];
         const concernsObj = JSON.parse(`{${concernsJson}}`);
         const concerns = concernsObj.concerns;
-        
+
         if (concerns && concerns.length > 0) {
           const concernsSection = resultsElement.querySelector('.concerns-section');
           const concernsList = concernsSection.querySelector('ul');
-          
+
           concernsList.innerHTML = concerns.map(concern => `
             <li class="fade-in">${concern}</li>
           `).join('');
@@ -576,11 +566,6 @@ function renderComplete(data, resultsElement) {
   resultsElement.innerHTML = `
     <div class="structured-summary">
       <h2 class="fade-in">${data.title}</h2>
-      
-      <div class="summary-section">
-        <h3>Summary</h3>
-        <p class="fade-in">${data.summary}</p>
-      </div>
 
       <div class="plain-language-section">
         <h3>In Plain English</h3>
@@ -601,7 +586,7 @@ function renderComplete(data, resultsElement) {
 
       ${data.concerns.length > 0 ? `
         <div class="concerns-section">
-          <h3>⚠️ Things to Watch Out For</h3>
+          <h3>Things to Watch Out For</h3>
           <ul>
             ${data.concerns.map(concern => `<li class="fade-in">${concern}</li>`).join('')}
           </ul>
@@ -609,284 +594,48 @@ function renderComplete(data, resultsElement) {
       ` : ''}
     </div>
   `;
+  document.querySelector('#btn-unlegalese').classList.remove('disabled');
 }
 
-async function progressiveRenderUnlegaleseFinal(message) {
-  const controller = new AbortController();
-  const thinking = document.querySelector("#thinking");
-  const results = document.querySelector("#results");
-
-  // Initialize the container with progress bar and empty sections
-  results.innerHTML = `
-    <div class="streaming-progress">
-      <div class="progress-text">Analyzing legal document...</div>
-      <div class="progress-bar">
-        <div class="progress-fill"></div>
-      </div>
-    </div>
-    <div class="structured-summary">
-      <h2 class="loading-placeholder">Analyzing document...</h2>
-      
-      <div class="summary-section">
-        <h3>Summary</h3>
-        <p class="content-placeholder">Generating summary...</p>
-      </div>
-
-      <div class="plain-language-section">
-        <h3>In Plain English</h3>
-        <p class="content-placeholder">Simplifying language...</p>
-      </div>
-
-      <div class="key-points-section">
-        <h3>Key Points</h3>
-        <ul class="content-placeholder">
-          <li>Extracting key points...</li>
-        </ul>
-      </div>
-
-      <div class="concerns-section" style="display: none;">
-        <h3>⚠️ Things to Watch Out For</h3>
-        <ul class="content-placeholder"></ul>
-      </div>
-    </div>
-  `;
-
-  try {
-    const response = await fetch(
-      `https://${import.meta.env.VITE_B4A_LIVE_SERVER_URL}/unlegalese-structured-stream-final`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Parse-REST-API-Key": import.meta.env.VITE_B4A_REST_API_KEY,
-          "X-Parse-Application-Id": import.meta.env.VITE_B4A_APPLICATION_ID,
-        },
-        credentials: "include",
-        body: JSON.stringify({ message }),
-        signal: controller.signal,
-      }
-    );
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`HTTP ${response.status}: ${errorText}`);
-    }
-
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder();
-    let buffer = "";
-    let accumulatedJson = "";
-    let charCount = 0;
-
-    thinking.style.display = "none";
-
-    while (true) {
-      const { value, done } = await reader.read();
-      if (done) break;
-
-      buffer += decoder.decode(value, { stream: true });
-
-      // Process complete SSE lines
-      const lines = buffer.split("\n");
-      buffer = lines.pop(); // keep incomplete line
-
-      for (const line of lines) {
-        if (line.startsWith("data: ")) {
-          const payload = line.slice(6).trim();
-
-          if (payload && payload !== "[DONE]") {
-            try {
-              const parsed = JSON.parse(payload);
-
-              if (parsed.type === "delta") {
-                accumulatedJson += parsed.content;
-                charCount += parsed.content.length;
-                
-                // Update progress bar
-                const progressFill = results.querySelector(".progress-fill");
-                if (progressFill) {
-                  const progress = Math.min((charCount / 50) * 100, 90);
-                  progressFill.style.width = `${progress}%`;
-                }
-                
-                // Try to parse partial JSON and render what we can
-                tryProgressiveRenderFinal(accumulatedJson, results);
-
-              } else if (parsed.type === "complete") {
-                // Hide progress bar and final render with complete data
-                const progressBar = results.querySelector(".streaming-progress");
-                if (progressBar) {
-                  progressBar.style.display = "none";
-                }
-                
-                const data = parsed.data;
-                renderCompleteFinal(data, results);
-
-                window.scrollTo({
-                  top: document.body.scrollHeight,
-                  behavior: 'smooth'
-                });
-              } else if (parsed.type === "error") {
-                results.innerHTML = `<div class="error">Error: ${parsed.error}</div>`;
-              }
-            } catch (e) {
-              console.error("Parse error:", e);
-            }
-          }
-        }
-
-        if (line.startsWith("event: done")) {
-          controller.abort();
-          return;
-        }
-      }
-    }
-  } catch (err) {
-    if (err.name !== "AbortError") {
-      thinking.style.display = "none";
-      results.innerHTML = `<div class="error">Error: ${err.message}</div>`;
-      console.error("Progressive render error:", err);
-    }
-  }
-}
-
-function tryProgressiveRenderFinal(jsonString, resultsElement) {
-  // Try to extract and render partial fields from incomplete JSON
-  try {
-    // Extract title if available
-    const titleMatch = jsonString.match(/"title"\s*:\s*"([^"]+)"/);
-    if (titleMatch) {
-      const titleElement = resultsElement.querySelector('h2');
-      if (titleElement && titleElement.classList.contains('loading-placeholder')) {
-        titleElement.textContent = titleMatch[1];
-        titleElement.classList.remove('loading-placeholder');
-        titleElement.classList.add('fade-in');
-      }
-    }
-
-    // Extract summary if available
-    const summaryMatch = jsonString.match(/"summary"\s*:\s*"([^"]+(?:\\.[^"]+)*)"/);
-    if (summaryMatch) {
-      const summaryElement = resultsElement.querySelector('.summary-section p');
-      if (summaryElement) {
-        // Unescape JSON string
-        const summary = summaryMatch[1].replace(/\\"/g, '"').replace(/\\n/g, '\n');
-        summaryElement.textContent = summary;
-        summaryElement.classList.remove('content-placeholder');
-        summaryElement.classList.add('fade-in');
-      }
-    }
-
-    // Extract plain language version if available
-    const plainMatch = jsonString.match(/"plain_language_version"\s*:\s*"([^"]+(?:\\.[^"]+)*)"/);
-    if (plainMatch) {
-      const plainElement = resultsElement.querySelector('.plain-language-section p');
-      if (plainElement) {
-        const plainText = plainMatch[1].replace(/\\"/g, '"').replace(/\\n/g, '\n');
-        plainElement.textContent = plainText;
-        plainElement.classList.remove('content-placeholder');
-        plainElement.classList.add('fade-in');
-      }
-    }
-
-    // Try to extract key points array
-    const keyPointsMatch = jsonString.match(/"key_points"\s*:\s*\[([\s\S]*?)\]/);
-    if (keyPointsMatch) {
-      // Try to parse complete key point objects
-      const keyPointsJson = keyPointsMatch[0];
-      try {
-        const keyPointsObj = JSON.parse(`{${keyPointsJson}}`);
-        const keyPoints = keyPointsObj.key_points;
-        
-        if (keyPoints && keyPoints.length > 0) {
-          const keyPointsList = resultsElement.querySelector('.key-points-section ul');
-          if (keyPointsList) {
-            keyPointsList.innerHTML = keyPoints.map(point => `
-              <li class="fade-in">
-                <strong>${point.heading}</strong>
-                <p>${point.explanation}</p>
-              </li>
-            `).join('');
-            keyPointsList.classList.remove('content-placeholder');
-          }
-        }
-      } catch (e) {
-        // Not complete yet, continue
-      }
-    }
-
-    // Try to extract concerns array
-    const concernsMatch = jsonString.match(/"concerns"\s*:\s*\[([\s\S]*?)\]/);
-    if (concernsMatch) {
-      try {
-        const concernsJson = concernsMatch[0];
-        const concernsObj = JSON.parse(`{${concernsJson}}`);
-        const concerns = concernsObj.concerns;
-        
-        if (concerns && concerns.length > 0) {
-          const concernsSection = resultsElement.querySelector('.concerns-section');
-          const concernsList = concernsSection.querySelector('ul');
-          
-          concernsList.innerHTML = concerns.map(concern => `
-            <li class="fade-in">${concern}</li>
-          `).join('');
-          concernsList.classList.remove('content-placeholder');
-          concernsSection.style.display = 'block';
-        }
-      } catch (e) {
-        // Not complete yet
-      }
-    }
-
-  } catch (error) {
-    // Silently fail - we'll try again with more data
-  }
-}
-
-function renderCompleteFinal(data, resultsElement) {
+function renderCompleteTest(data, resultsElement) {
   resultsElement.innerHTML = `
     <div class="streaming-progress">
-      <div class="progress-text">Analyzing legal document...</div>
+      <div id="thinking" class="progress-text">🧐 Analyzing legal document...</div>
       <div class="progress-bar">
         <div class="progress-fill"></div>
       </div>
     </div>
     <div class="structured-summary">
       <h2 class="fade-in">${data.title}</h2>
-      
-      <div class="summary-section">
-        <h3>Summary</h3>
-        <p class="fade-in">${data.summary}</p>
-      </div>
 
-      <div class="plain-language-section">
+      <div class="structured-section">
         <h3>In Plain English</h3>
         <p class="fade-in">${data.plain_language_version}</p>
       </div>
 
-      <div class="key-points-section">
+      <div class="structured-section">
         <h3>Key Points</h3>
         <ul>
           ${data.key_points.map(point => `
             <li class="fade-in">
-              <strong>${point.heading}</strong>
-              <p>${point.explanation}</p>
+              <p><strong>${point.heading}</strong> ${point.explanation}</p>
             </li>
           `).join('')}
         </ul>
       </div>
 
       ${data.concerns.length > 0 ? `
-        <div class="concerns-section">
-          <h3>⚠️ Things to Watch Out For</h3>
+        <div class="structured-section">
+          <h3>Things to Watch Out For</h3>
           <ul>
-            ${data.concerns.map(concern => `<li class="fade-in">${concern}</li>`).join('')}
+            ${data.concerns.map(concern => `<li class="fade-in"><p>${concern}</p></li>`).join('')}
           </ul>
         </div>
       ` : ''}
     </div>
   `;
   results.querySelector(".progress-fill").style.width = `50%`;
+  animateThinkingMode(document.querySelector('#thinking'));
 }
 
 var legaleseCopy, activeTabId;
@@ -894,7 +643,7 @@ var hasError = false;
 const getLegalese = () => {
   if (!chrome.tabs) {
     console.log('not in extension mode')
-    testMockRender(renderCompleteFinal);
+    testMockRender(renderCompleteTest);
     return;
   }
   chrome.tabs.query({ active: true, currentWindow: true }).then(function (tabs) {

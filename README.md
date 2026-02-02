@@ -16,6 +16,7 @@ To help me learn how to build and host apps that leverage LLMs I came up with th
 
 ### Improvements
 - ✅ Better formatting of response so it isn't just a blob of copy.
+- ✅ Progressive rendering of results grouped into related sections.
 - Add "Expound Upon" option to explain specific sentences or phrases. 
 - Add monitoring of token consumption
 - Add "bring your own key" option?

@@ -3,8 +3,8 @@
 
 .about-modal {
   background-color: #faf3ec;
-  border: solid 1px #4a3728;
   border-radius: 8px;
+  filter: drop-shadow(0 4px 4px #4a372877);
   padding: 32px;
   left: 50%;
   top: 129px;
@@ -43,7 +43,7 @@ body {
   border: none;
   position: absolute;
   right: -24px;
-  top: -16px;
+  top: 8px;
 }
 
 #btn-unlegalese {
@@ -51,12 +51,12 @@ body {
   border: none;
   border-radius: 128px;
   color: #fff;
-  filter: drop-shadow(0 2px 0 #00000077);
+  filter: drop-shadow(0 4px 4px #4a372877);
   padding: 12px 16px 8px 16px;
 }
 
 #btn-unlegalese:active {
-  filter: drop-shadow(0 1px 0 #000000BB);
+  filter: drop-shadow(0 1px 1px #4a3728EE);
   transform: scale(0.975);
 }
 
@@ -71,6 +71,22 @@ body {
 
 button {
   cursor: pointer;
+}
+
+.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+#empty-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background-color: #765c4310;
+  border: 1px dashed #765c4355; 
+  height: 5vh;
+  width: 100%;
 }
 
 h1 {
@@ -104,7 +120,7 @@ p {
 .result {
   background-color: #F0EDE9;
   border-radius: 8px;
-  border: 1px dashed #765c43;
+  border: 1px solid #765c43;
   font-size: 1.1rem;
   font-weight: 600;
   padding: 16px;
@@ -118,22 +134,16 @@ p {
   display: none;
 }
 
-#thinking {
-  display: none;
-}
-
 /* Streaming progress indicator */
 .streaming-progress {
-  background-color: #F0EDE9;
-  border-radius: 8px;
-  border: 1px dashed #765c43;
   padding: 24px;
   text-align: center;
 }
 
 .progress-text {
   font-family: "Zalando Sans Expanded", sans-serif;
-  font-size: 1.1rem;
+  font-size: 1rem;
+  font-weight: 400;
   color: #765c43;
   margin-bottom: 16px;
 }
@@ -203,91 +213,40 @@ p {
 
 /* Structured summary styles */
 .structured-summary {
-  background-color: #F0EDE9;
-  border-radius: 8px;
-  border: 1px dashed #765c43;
+  font-weight: 400;
   padding: 24px;
   text-align: left;
 }
 
 .structured-summary h2 {
   font-family: "Zalando Sans Expanded", sans-serif;
-  font-size: 2rem;
+  font-size: 1.1rem;
+  font-weight: 600;
   margin: 0 0 24px 0;
   color: #4a3728;
 }
 
 .structured-summary h3 {
   font-family: "Zalando Sans Expanded", sans-serif;
-  font-size: 1.3rem;
+  font-size: 1rem;
+  font-weight: 600;
   margin: 24px 0 12px 0;
   color: #765c43;
   border-bottom: 2px solid #d4c4b0;
   padding-bottom: 8px;
 }
 
-.summary-section p,
-.plain-language-section p {
+.structured-summary p {
+  line-height: 1.4;
   text-align: left;
-  line-height: 1.6;
-  margin: 8px 0;
-}
-
-.key-points-section ul {
-  list-style: none;
-  padding: 0;
-}
-
-.key-points-section li {
-  background-color: #faf3ec;
-  border-left: 4px solid #765c43;
-  padding: 12px 16px;
-  margin: 12px 0;
-  border-radius: 4px;
-}
-
-.key-points-section strong {
-  display: block;
-  font-family: "Zalando Sans Expanded", sans-serif;
-  font-size: 1.1rem;
-  margin-bottom: 6px;
-  color: #4a3728;
-}
-
-.key-points-section p {
   margin: 0;
-  text-align: left;
-  line-height: 1.5;
 }
 
-.concerns-section {
-  background-color: #fff3cd;
-  border: 2px solid #ffc107;
-  border-radius: 8px;
-  padding: 16px;
-  margin-top: 24px;
-}
-
-.concerns-section h3 {
-  color: #856404;
-  border-bottom-color: #ffc107;
-  margin-top: 0;
-}
-
-.concerns-section ul {
+.structured-summary ul {
+  display: grid;
+  gap: 16px;
   list-style: none;
-  padding: 0;
-}
-
-.concerns-section li {
-  padding: 8px 0 8px 24px;
-  position: relative;
-}
-
-.concerns-section li:before {
-  content: "⚠️";
-  position: absolute;
-  left: 0;
+  padding-left: 0;
 }
 
 .error {
@@ -301,14 +260,24 @@ p {
 
 @media only screen and (max-width: 450px) {
 .about-modal {
-  width: 90vw;
+  width: 70vw;
 }
 
 body {
-  margin: 10vh 10vw;
+  margin: 10vh 5vw;
+}
+
+#btn-about {
+  right: -8px;
+  top: 4px;
 }
 
 h1 {
   font-size: 2.5rem;
+}
+
+h4 {
+  font-size: 0.75rem;
+  letter-spacing: 0rem;
 }
 }
