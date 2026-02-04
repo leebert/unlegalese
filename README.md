@@ -13,6 +13,7 @@ To help me learn how to build and host apps that leverage LLMs I came up with th
 - ✅ Improve UX by leveraging OpenAI API streaming
 - ✅ Turn app into Google Chrome extension
 - ☑️ ~~Learn how to set up [Back4App local dev] (https://www.back4app.com/docs/local-development/parse-cli)~~
+- ✅ Port backend to [Google Cloud] (https://github.com/leebert/unlegalese-backend)
 
 ### Improvements
 - ✅ Better formatting of response so it isn't just a blob of copy.
