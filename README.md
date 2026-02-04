@@ -1,6 +1,8 @@
 # unlegalese
 An OpenAI API Prototype
 
+⚠️ Note: This branch uses Back4App for its backend and is deprecated. ⚠️
+
 ### Project Overview
 To help me learn how to build and host apps that leverage LLMs I came up with the idea to use OpenAI's Response API to create human-friendly summaries of legalese documents such as Terms of Service, Privacy Policies, etc.
 
