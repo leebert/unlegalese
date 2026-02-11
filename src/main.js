@@ -320,6 +320,10 @@ async function progressiveRenderUnlegalese(message) {
 
                 // Try to parse partial JSON and render what we can
                 tryProgressiveRender(accumulatedJson, results);
+                window.scrollTo({
+                  top: document.body.scrollHeight,
+                  behavior: 'smooth'
+                });
 
               } else if (parsed.type === "complete") {
                 // Hide progress bar and final render with complete data
@@ -396,13 +400,28 @@ function tryProgressiveRender(jsonString, resultsElement) {
         if (keyPoints && keyPoints.length > 0) {
           const keyPointsList = resultsElement.querySelector('.key-points-section ul');
           if (keyPointsList) {
-            keyPointsList.innerHTML = keyPoints.map(point => `
-              <li class="fade-in">
-                <strong>${point.heading}</strong>
-                <p>${point.explanation}</p>
-              </li>
-            `).join('');
-            keyPointsList.classList.remove('content-placeholder');
+            // Track how many items we've already rendered
+            const currentCount = parseInt(keyPointsList.dataset.renderedCount || '0', 10);
+            
+            // Only render new items
+            if (keyPoints.length > currentCount) {
+              const newItems = keyPoints.slice(currentCount);
+              const fragment = document.createDocumentFragment();
+              
+              newItems.forEach(point => {
+                const li = document.createElement('li');
+                li.className = 'fade-in';
+                li.innerHTML = `
+                  <strong>${point.heading}</strong>
+                  <p>${point.explanation}</p>
+                `;
+                fragment.appendChild(li);
+              });
+              
+              keyPointsList.appendChild(fragment);
+              keyPointsList.dataset.renderedCount = keyPoints.length;
+              keyPointsList.classList.remove('content-placeholder');
+            }
           }
         }
       } catch (e) {
