@@ -1,5 +1,5 @@
 # ~~unlegalese~~ Legal*ease*
-An OpenAI API Prototype
+An AI API Integration Prototype
 
 ### Project Overview
 To help me learn how to build and host apps that leverage LLMs I came up with the idea to use OpenAI's Response API to create human-friendly summaries of legalese documents such as Terms of Service, Privacy Policies, etc.
