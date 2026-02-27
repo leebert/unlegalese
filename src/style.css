@@ -84,6 +84,10 @@ button {
   pointer-events: none;
 }
 
+.ease {
+  font-style: italic;
+}
+
 #empty-state {
   display: flex;
   align-items: center;
