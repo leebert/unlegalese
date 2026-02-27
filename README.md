@@ -4,7 +4,7 @@ An OpenAI API Prototype
 ### Project Overview
 To help me learn how to build and host apps that leverage LLMs I came up with the idea to use OpenAI's Response API to create human-friendly summaries of legalese documents such as Terms of Service, Privacy Policies, etc.
 
-![Legal*ease* Demo Recording](https://github.com/user-attachments/assets/02fd075c-24f0-4e88-9e63-d8c1af25df8f)
+![Legal*ease* Demo Recording](https://github.com/user-attachments/assets/6b8c33d9-76dd-41ad-bb61-af092653790c)
 
 ### Project Goals
 - ✅ Learn how to use OpenAI’s Response API
